@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           LAST.FM Color Visited Links
-// @namespace      http://userscripts.org/users/121410
+// @namespace      https://github.com/Row/lastfm-userscripts
 // @description    LAST.FM Color Visited Links with grey
 // @include        http://www.last.fm*
 // @include        http://www.lastfm.*

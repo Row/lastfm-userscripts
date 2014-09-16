@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Last.fm generate album BB-code
-// @namespace  http://use.i.E.your.homepage/
+// @namespace  https://github.com/Row/lastfm-userscripts
 // @version    0.1
 // @description Adds an textarea on each album page on last.fm, with corresponding bb-code... Cat, dog and mouse ecosystem, but above all cheese.
 // @match      http://www.last.fm/music/*/*
