@@ -2,7 +2,7 @@
 // @name           Last.fm link to Metal Archives 
 // @namespace      https://github.com/Row/lastfm-userscripts
 // @description    Creates a small M in front of each artist link on www.last.fm. The M's are linked to perform a band search on www.metal-archives.com
-// @version        1.7
+// @version        1.7.1
 // @include        http://www.last.fm*
 // @include        http://www.lastfm.*
 // @include        http://cn.last.fm*
@@ -48,10 +48,13 @@ function parser(doc)
             || (!nodeListA[i].hasChildNodes()) 
             || (nodeListA[i].hasChildNodes() && nodeListA[i].firstChild.nodeName == 'IMG'))
             continue;
-        
+
         //Match the href against the regular expression
         if (id = nodeListA[i].href.match(re)) {
             
+            // Filter
+            var artist = id[1].replace(/\?.+$/, '');
+
             //Use className as a marker
             nodeListA[i].className += ' LMA';
             
@@ -59,9 +62,9 @@ function parser(doc)
             var nma = doc.createElement('a');
             nma.className = 'LMAa'; 
             nma.innerHTML = 'M ';
-            nma.title = 'Search '+id[1]+' on Metal Archives';
+            nma.title = 'Search ' + artist + ' on Metal Archives';
             
-            nma.href = 'http://www.metal-archives.com/search?type=band_name&searchString='+id[1];
+            nma.href = 'http://www.metal-archives.com/search?type=band_name&searchString=' + artist;
             nma = nodeListA[i].parentNode.insertBefore(nma, nodeListA[i]);
             
             //Since the nodelist is "live".
