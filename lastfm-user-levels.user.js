@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Last.fm User Levels
-// @namespace      http://userscripts.org/users/121410
+// @namespace      https://github.com/Row/lastfm-userscripts
 // @description    Add Last.fm User Level ( http://stas.sh/lastfm/ ) to every last.fm profile you visit.
 // @version        0.1.2
 // @include        http://www.last.fm/user/*
