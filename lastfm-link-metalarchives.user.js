@@ -59,7 +59,7 @@ function parser(doc)
             metalLink.href = 'http://www.metal-archives.com/search?type=band_name&searchString=' + artist;
             metalLink.className = 'LMAa';
             metalLink.title = 'Search ' + artist + ' on Metal Archives';
-            console.log(artistLink.className);
+
             if (artistLink.className.search(/featured-track-subtitle/) > -1) {
                 metalLink.innerHTML = "Metal Archives";
                 metalLink.className += ' metadata-title';
