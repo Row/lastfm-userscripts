@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name           Last.fm link to Metal Archives 
+// @name           Last.fm link to Metal Archives
 // @namespace      https://github.com/Row/lastfm-userscripts
 // @description    Creates a small M in front of each artist link on www.last.fm. The M's are linked to perform a band search on www.metal-archives.com
-// @version        1.7.1
+// @version        2.0
 // @include        http://www.last.fm*
 // @include        http://www.lastfm.*
 // @include        http://cn.last.fm*
 // ==/UserScript==
 
-function addStyle(css) 
+function addStyle(css)
 {
     var head, style;
     head = document.getElementsByTagName('head')[0];
@@ -24,60 +24,62 @@ function addStyle(css)
 }
 
 addStyle('.LMAa { font-size: 70% !important; display: inline}' +
-         '.text-over-image-text>.LMAa,.libraryItems .LMAa, .similar-artists li .LMAa {color: #000; padding: 3px; position: absolute; z-index: 99; background: #FFF; border: 1px solid #000;line-height: 80%}' +
-         '.text-over-image-text>.LMAa {right: 2px; top: 2px;}' +
-         '.media>.LMAa,.chartbar .LMAa {display:none}'
+         '.grid-items-item-aux-text>.LMAa, .countbar-bar-slug>.LMAa, .header-info-primary>.LMAa, .venn_title>LMAa, .chartlist-name>.LMAa {display:none}'
          );
 
-function parser(doc) 
-{   
+function parser(doc)
+{
     //Create a node-list of all a-tags
     var nodeListA = doc.getElementsByTagName('a');
-    
+
     //Regular expression
     //Match /music/ and one or more characters which is not /
     var re = /\/music\/([^/#]+)$/i;
     var id;
-    
+
     //Iterate through the node-list
-    for (var i = 0; i < nodeListA.length; i++) { 
-        
+    for (var i = 0; i < nodeListA.length; i++) {
+        var artistLink = nodeListA[i];
         //Check if current a-element has childnodes and that the firstchild is not an image
         //If so continue whit next iteration.
-        if ((nodeListA[i].className.search(/(LMA|mSend|plays)/) > -1) 
-            || (!nodeListA[i].hasChildNodes()) 
-            || (nodeListA[i].hasChildNodes() && nodeListA[i].firstChild.nodeName == 'IMG'))
+        if ((artistLink.className.search(/(LMA)/) > -1))
             continue;
 
         //Match the href against the regular expression
-        if (id = nodeListA[i].href.match(re)) {
-            
+        if (id = artistLink.href.match(re)) {
+
             // Filter
             var artist = id[1].replace(/\?.+$/, '');
 
             //Use className as a marker
-            nodeListA[i].className += ' LMA';
-            
+            artistLink.className += ' LMA';
+
             //Create the M
-            var nma = doc.createElement('a');
-            nma.className = 'LMAa'; 
-            nma.innerHTML = 'M ';
-            nma.title = 'Search ' + artist + ' on Metal Archives';
-            
-            nma.href = 'http://www.metal-archives.com/search?type=band_name&searchString=' + artist;
-            nma = nodeListA[i].parentNode.insertBefore(nma, nodeListA[i]);
-            
+            var metalLink = doc.createElement('a');
+            metalLink.href = 'http://www.metal-archives.com/search?type=band_name&searchString=' + artist;
+            metalLink.className = 'LMAa';
+            metalLink.title = 'Search ' + artist + ' on Metal Archives';
+            console.log(artistLink.className);
+            if (artistLink.className.search(/featured-track-subtitle/) > -1) {
+                metalLink.innerHTML = "Metal Archives";
+                metalLink.className += ' metadata-title';
+                artistLink.parentNode.insertBefore(metalLink, artistLink);
+            } else {
+                metalLink.innerHTML = 'M ';
+                artistLink.parentNode.insertBefore(metalLink, artistLink);
+            }
+
             //Since the nodelist is "live".
             i++;
         }
     }
-    
+
     //Init the ticker
-    ticker(doc,i);        
+    ticker(doc,i);
 }
 
 //Method to check if the document has changed
-function ticker(doc,aCount) 
+function ticker(doc,aCount)
 {
     //if there are new a-tags
     if(aCount != doc.getElementsByTagName('a').length) {
