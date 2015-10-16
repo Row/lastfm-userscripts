@@ -2,7 +2,7 @@
 // @name           Last.fm link to Metal Archives
 // @namespace      https://github.com/Row/lastfm-userscripts
 // @description    Creates a small M in front of each artist link on www.last.fm. The M's are linked to perform a band search on www.metal-archives.com
-// @version        2.0
+// @version        2.1
 // @include        http://www.last.fm*
 // @include        http://www.lastfm.*
 // @include        http://cn.last.fm*
@@ -40,9 +40,8 @@ function parser(doc)
     //Iterate through the node-list
     for (var i = 0; i < nodeListA.length; i++) {
         var artistLink = nodeListA[i];
-        //Check if current a-element has childnodes and that the firstchild is not an image
-        //If so continue whit next iteration.
-        if ((artistLink.className.search(/(LMA)/) > -1))
+
+        if (artistLink.className.search(/(LMA)/) > -1 || artistLink.parentNode.className.search(/js-period/) > -1)
             continue;
 
         //Match the href against the regular expression
