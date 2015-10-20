@@ -2,7 +2,7 @@
 // @name           Last.fm link to Metal Archives
 // @namespace      https://github.com/Row/lastfm-userscripts
 // @description    Creates a small M in front of each artist link on www.last.fm. The M's are linked to perform a band search on www.metal-archives.com
-// @version        2.1
+// @version        2.2
 // @include        http://www.last.fm*
 // @include        http://www.lastfm.*
 // @include        http://cn.last.fm*
@@ -24,7 +24,7 @@ function addStyle(css)
 }
 
 addStyle('.LMAa { font-size: 70% !important; display: inline}' +
-         '.grid-items-item-aux-text>.LMAa, .countbar-bar-slug>.LMAa, .header-info-primary>.LMAa, .venn_title>LMAa, .chartlist-name>.LMAa {display:none}'
+         '.grid-items-item-aux-text>.LMAa, .countbar-bar-slug>.LMAa, .header-info-primary>.LMAa, .venn_title>LMAa, .chartlist-name>.LMAa, .site-links .LMAa {display:none}'
          );
 
 function parser(doc)
