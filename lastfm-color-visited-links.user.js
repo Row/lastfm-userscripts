@@ -2,9 +2,9 @@
 // @name           LAST.FM Color Visited Links
 // @namespace      https://github.com/Row/lastfm-userscripts
 // @description    LAST.FM Color Visited Links with grey
-// @include        http://www.last.fm*
-// @include        http://www.lastfm.*
-// @include        http://cn.last.fm*
+// @include        https://www.last.fm*
+// @include        https://www.lastfm.*
+// @include        https://cn.last.fm*
 // ==/UserScript==
 
 function addStyle(css) {

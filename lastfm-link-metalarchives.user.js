@@ -2,10 +2,10 @@
 // @name           Last.fm link to Metal Archives
 // @namespace      https://github.com/Row/lastfm-userscripts
 // @description    Creates a small M in front of each artist link on www.last.fm. The M's are linked to perform a band search on www.metal-archives.com
-// @version        2.2
-// @include        http://www.last.fm*
-// @include        http://www.lastfm.*
-// @include        http://cn.last.fm*
+// @version        2.3
+// @include        https://www.last.fm*
+// @include        https://www.lastfm.*
+// @include        https://cn.last.fm*
 // ==/UserScript==
 
 function addStyle(css)
