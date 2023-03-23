@@ -1,72 +1,70 @@
 // ==UserScript==
 // @name           Last.fm link to Metal Archives
 // @namespace      https://github.com/Row/lastfm-userscripts
-// @description    Creates a small M in front of each artist link on www.last.fm. The M's are linked to perform a band search on www.metal-archives.com
-// @version        3.1
+// @description    Creates a small M in front of each artist link on www.last.fm
+//                 The M's are linked to perform a band search on www.metal-archives.com
+// @version        4.0
 // @match          https://www.last.fm/*
 // @match          https://www.lastfm.*/*
 // @match          https://cn.last.fm/*
+// @grant          GM_addStyle
 // ==/UserScript==
 
-function addStyle(css) {
-    var head, style;
-    head = document.getElementsByTagName('head')[0];
-    if (!head) { return; }
-    style = document.createElement('style');
-    style.type = 'text/css';
-    try {
-        style.innerHTML = css;
-    } catch (err) {
-        style.innerText = css;
-    }
-    head.appendChild(style);
-}
-
-addStyle(`
-    .LMAa {
-        font-size: 70% !important;
-        display: inline;
-    }
-    .grid-items-item-aux-text .LMAa, .featured-item-details .LMAa {
-        float: left;
-        margin-right: 0.5em;
-    }
-`);
-
-function parser() {
-    // Create a node-list of all a-tags
-    const selector = 'a'+
-                     ':not(.LMA)' +
-                     ':not(.auth-dropdown-menu-item)' +
-                     ':not([aria-hidden="true"])' +
-                     '[href^="/music"]';
-
-    const nodeListA = document.querySelectorAll(selector);
-
-    // Match /music/ and one or more characters which is not / or #
-    const re = /\/music\/([^/#]+)$/i;
-
-    nodeListA.forEach(artistLink => {
-        const match = artistLink.href.match(re);
+(function () {
+    'use strict';
+    GM_addStyle(`
+        .LMAa {
+            font-size: 70% !important;
+            display: inline;
+        }
+        .grid-items-item-aux-text .LMAa, .featured-item-details .LMAa {
+            float: left;
+            margin-right: 0.5em;
+        }
+    `);
+    const selector = 'a:not(.auth-dropdown-menu-item):not([aria-hidden="true"])[href^="/music"]';
+    function addMetalArchivesLink(artistLink) {
+        const artistUrl = new URL(artistLink.href);
+        const artistPath = artistUrl.pathname;
+        const match = artistPath.match(/\/music\/([^/#]+)$/i);
         if (!match) return;
-
-        // Remove uri query string if present
-        const artist = match[1].replace(/\?.+$/, '');
-
-        // Use className as a marker
-        artistLink.className += ' LMA';
-
-        // Create the M
+        const artistName = decodeURIComponent(match[1]);
+        if (!artistName) return;
+        if (artistLink.querySelector('.LMAa')) {
+            console.log('hehehe')   
+            return; // Already processed
+    }
         const metalLink = document.createElement('a');
-        metalLink.href = 'http://www.metal-archives.com/search?type=band_name&searchString=' + artist;
+        metalLink.href = 'http://www.metal-archives.com/search?type=band_name&searchString=' + encodeURIComponent(artistName);
         metalLink.className = 'LMAa';
-        metalLink.title = 'Search ' + artist + ' on Metal Archives';
-        metalLink.innerHTML = 'M ';
-        artistLink.parentNode.insertBefore(metalLink, artistLink);
+        metalLink.title = 'Search ' + artistName + ' on Metal Archives';
+        metalLink.innerText = 'M ';
+        artistLink.insertBefore(metalLink, artistLink.firstChild);
+    }
+
+    function handleAddedNode(node) {
+        if (node.nodeType === Node.ELEMENT_NODE && node.querySelector) {
+            for (const a of node.querySelectorAll(selector)) {
+                addMetalArchivesLink(a);
+            }
+        }
+    }
+
+    const observer = new MutationObserver(mutations => {
+        for (const mutation of mutations) {
+            for (const node of mutation.addedNodes) {
+                handleAddedNode(node);
+            }
+        }
     });
 
-    // Init the ticker
-    window.setTimeout(parser, 1000);
-}
+    const nodeListA = document.querySelectorAll(selector);
+    for (const artistLink of nodeListA) {
+        addMetalArchivesLink(artistLink);
+    }
 
-parser();
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
+})();
