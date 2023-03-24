@@ -24,6 +24,7 @@
         }
     `);
     const selector = 'a:not(.auth-dropdown-menu-item):not([aria-hidden="true"])[href^="/music"]';
+    const headerSelector = 'h1.header-new-title[itemprop="name"]';
 
     function addMetalArchivesLink(artistLink) {
         const artistPath = new URL(artistLink.href).pathname;
@@ -33,16 +34,23 @@
         const artistName = decodeURIComponent(match[1]);
         if (!artistName) return;
 
-        const metalLink = createMetalArchivesLink(artistName);
+        const metalLink = createMetalArchivesLink(artistName, artistLink);
         artistLink.parentNode.insertBefore(metalLink, artistLink);
     }
 
-    function createMetalArchivesLink(artistName) {
-        const metalLink = document.createElement('a');
-        metalLink.href = `https://www.metal-archives.com/search?type=band_name&searchString=${encodeURIComponent(artistName)}`;
+    function createMetalArchivesLink(artistName, anchorEl) {
+        const metalLink = document.createElement("a");
+        metalLink.href = `https://www.metal-archives.com/search?type=band_name&searchString=${encodeURIComponent(
+            artistName
+        )}`;
         metalLink.className = 'LMAa';
         metalLink.title = `Search ${artistName} on Metal Archives`;
         metalLink.innerText = 'M ';
+
+        const computedStyle = getComputedStyle(anchorEl);
+        metalLink.style.color = computedStyle.color;
+        metalLink.style.fontSize = computedStyle.fontSize;
+
         return metalLink;
     }
 
@@ -50,6 +58,13 @@
         const nodeListA = node.querySelectorAll(selector);
         for (const artistLink of nodeListA) {
             addMetalArchivesLink(artistLink);
+        }
+
+        const nodeListH1 = node.querySelectorAll(headerSelector);
+        for (const headerElement of nodeListH1) {
+            const headerText = headerElement.innerText;
+            const metalLink = createMetalArchivesLink(headerText, headerElement);
+            headerElement.parentNode.insertBefore(metalLink, headerElement);
         }
     }
 
